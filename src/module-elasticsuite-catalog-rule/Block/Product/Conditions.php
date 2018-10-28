@@ -147,7 +147,7 @@ class Conditions extends Template implements RendererInterface
              *        since we do not know yet the form structure
              */
             $conditions = $this->element->getValue();
-            if (!is_array($conditions)) {
+            if (is_object($conditions)) {
                 $conditions = $conditions->getConditions()->asArray();
             }
             $this->rule->getConditions()->loadArray($conditions);
