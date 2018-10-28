@@ -99,7 +99,7 @@ class Preview extends \Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPre
 
         $this->category->setIsActive(true);
 
-        if ($this->category->getIsVirtualCategory() || $this->category->getId()) {
+        if (($this->category->getIsVirtualCategory() || $this->category->getId()) && is_object($this->category->getVirtualRule())) {
             $query = $this->category->getVirtualRule()->getCategorySearchQuery($this->category);
         }
 
