@@ -140,7 +140,7 @@ class Preview extends Action
         $isVirtualCategory = (bool) $this->getRequest()->getParam('is_virtual_category');
         $category->setIsVirtualCategory($isVirtualCategory);
 
-        if ($isVirtualCategory) {
+        if ($isVirtualCategory && is_object($category->getVirtualRule())) {
             $category->getVirtualRule()->loadPost($this->getRequest()->getParam('virtual_rule', []));
             $category->setVirtualCategoryRoot($this->getRequest()->getParam('virtual_category_root', null));
         }
