@@ -157,10 +157,8 @@ class Preview extends Action
      */
     private function addSelectedProducts(CategoryInterface $category)
     {
-        $originalProducts = [];
-        $originalProducts['added_products'] = $category->getProductCollection()->getColumnValues("entity_id");
+        $selectedProducts = $this->getRequest()->getParam('selected_products', []);
 
-        $selectedProducts = $this->getRequest()->getParam('selected_products', $originalProducts);
         $addedProducts = isset($selectedProducts['added_products']) ? $selectedProducts['added_products'] : [];
         $category->setAddedProductIds($addedProducts);
 

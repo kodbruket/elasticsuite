@@ -31,17 +31,17 @@ define([
             this._super();
             this.initAssignedProductsListener();
         },
-        
+
         initObservable: function () {
             this._super();
             this.addedProducts   = {};
             this.deletedProducts = {};
             this.observe('addedProducts');
             this.observe('deletedProducts');
-            
+
             return this;
         },
-        
+
         initAssignedProductsListener: function () {
             var observer = new MutationObserver(function () {
                 var selectedProductsField = document.getElementById(this.formField);
@@ -52,11 +52,11 @@ define([
                     observer.observe(selectedProductsField, observerConfig);
                 }
             }.bind(this));
-            
+
             var observerConfig = {childList: true, subtree: true};
             observer.observe(document, observerConfig);
         },
-        
+
         onProductIdsUpdated: function (mutations) {
             while (mutations.length > 0) {
                 var currentMutation = mutations.shift();
@@ -64,13 +64,18 @@ define([
                 this.updateProductIds(productIds);
             }
         },
-        
+
         updateProductIds: function (productIds) {
             if (this.initialProductIds === undefined) {
+                this.addedProducts(productIds);
                 this.initialProductIds = productIds;
             } else {
-                this.addedProducts(_.difference(productIds, this.initialProductIds));
-                this.deletedProducts(_.difference(this.initialProductIds, productIds));
+                this.addedProducts(_.uniq(
+                    _.union(productIds, this.initialProductIds)
+                ));
+                this.deletedProducts(
+                    _.difference(this.initialProductIds, productIds)
+                );
             }
         }
     })
