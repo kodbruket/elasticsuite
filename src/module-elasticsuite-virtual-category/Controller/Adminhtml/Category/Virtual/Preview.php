@@ -43,6 +43,11 @@ class Preview extends Action
     private $categoryFactory;
 
     /**
+     * @var \Smile\ElasticsuiteVirtualCategory\Model\KodbrucketPreviewFactory
+     */
+    private $kodbrucketPreviewFactory;
+
+    /**
      * Constructor.
      *
      * @param \Magento\Backend\App\Action\Context                     $context             Controller context.
@@ -53,6 +58,7 @@ class Preview extends Action
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Smile\ElasticsuiteVirtualCategory\Model\PreviewFactory $previewModelFactory,
+        \Smile\ElasticsuiteVirtualCategory\Model\KodbrucketPreviewFactory $kodbrucketPreviewFactory,
         \Magento\Catalog\Model\CategoryFactory $categoryFactory,
         \Magento\Framework\Json\Helper\Data $jsonHelper
     ) {
@@ -61,6 +67,7 @@ class Preview extends Action
         $this->categoryFactory     = $categoryFactory;
         $this->previewModelFactory = $previewModelFactory;
         $this->jsonHelper          = $jsonHelper;
+        $this->kodbrucketPreviewFactory = $kodbrucketPreviewFactory;
     }
 
     /**
@@ -93,7 +100,11 @@ class Preview extends Action
         $category = $this->getCategory();
         $pageSize = $this->getPageSize();
 
-        return $this->previewModelFactory->create(['category' => $category, 'size' => $pageSize]);
+        if ($category->getIsVirtualCategory()) {
+            return $this->previewModelFactory->create(['category' => $category, 'size' => $pageSize]);
+        } else {
+            return $this->kodbrucketPreviewFactory->create(['category' => $category, 'size' => $pageSize]);
+        }
     }
 
     /**
@@ -158,7 +169,6 @@ class Preview extends Action
     private function addSelectedProducts(CategoryInterface $category)
     {
         $selectedProducts = $this->getRequest()->getParam('selected_products', []);
-
         $addedProducts = isset($selectedProducts['added_products']) ? $selectedProducts['added_products'] : [];
         $category->setAddedProductIds($addedProducts);
 
